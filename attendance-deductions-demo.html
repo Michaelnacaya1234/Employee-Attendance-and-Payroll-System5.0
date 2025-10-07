@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Deductions Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/modules/attendance-deductions.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Attendance Deductions System</h1>
+            <p class="text-lg text-gray-600">Implementation of late, absent, and undertime deduction formulas</p>
+        </div>
+
+        <!-- Formula Examples Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Formula Examples</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Late Deduction Example -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-blue-600 mb-3">Late Deduction Example</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div><strong>Daily wage:</strong> ₱250</div>
+                        <div><strong>Work schedule:</strong> 8:00 AM–8:00 PM (12 paid hours)</div>
+                        <div><strong>Time-in:</strong> 8:15 AM (15 minutes late)</div>
+                        <div><strong>Hourly rate:</strong> ₱250 ÷ 8 = ₱31.25/hr</div>
+                        <div><strong>Per-minute rate:</strong> ₱31.25 ÷ 60 = ₱0.520833/min</div>
+                        <div><strong>Late deduction:</strong> 15 × ₱0.520833 = ₱7.8125</div>
+                        <div><strong>Net for the day:</strong> ₱250 − ₱7.8125 = ₱242.19</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-blue-50 rounded text-sm">
+                        <strong>Quick formula:</strong> Net = DailyWage − (DailyWage / PaidHours / 60) × LateMinutes
+                    </div>
+                </div>
+
+                <!-- Undertime Deduction Example -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-green-600 mb-3">Undertime Deduction Example</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div><strong>Daily wage:</strong> ₱250</div>
+                        <div><strong>Work schedule:</strong> 8:00 AM–8:00 PM (12 paid hours)</div>
+                        <div><strong>Undertime:</strong> Leaves 30 minutes early</div>
+                        <div><strong>Hourly rate:</strong> ₱250 ÷ 8 = ₱31.25/hr</div>
+                        <div><strong>Per-minute rate:</strong> ₱31.25 ÷ 60 = ₱0.520833/min</div>
+                        <div><strong>Undertime deduction:</strong> 30 × ₱0.520833 = ₱15.625</div>
+                        <div><strong>Net for the day:</strong> ₱250 − ₱15.625 = ₱234.38</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-green-50 rounded text-sm">
+                        <strong>Quick formula:</strong> Net = DailyWage − (DailyWage / PaidHours / 60) × UndertimeMinutes
+                    </div>
+                </div>
+
+                <!-- Overtime Example -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-purple-600 mb-3">Overtime Example</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div><strong>Daily wage:</strong> ₱250</div>
+                        <div><strong>Work schedule:</strong> 8:00 AM–8:00 PM (12 paid hours)</div>
+                        <div><strong>Overtime:</strong> Works 1 hour extra</div>
+                        <div><strong>Hourly rate:</strong> ₱250 ÷ 8 = ₱31.25/hr</div>
+                        <div><strong>Per-minute rate:</strong> ₱31.25 ÷ 60 = ₱0.520833/min</div>
+                        <div><strong>OT rate (125%):</strong> ₱0.520833 × 1.25 = ₱0.651041/min</div>
+                        <div><strong>Overtime pay:</strong> 60 × ₱0.651041 = ₱39.0625</div>
+                        <div><strong>Net for the day:</strong> ₱250 + ₱39.0625 = ₱289.06</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-purple-50 rounded text-sm">
+                        <strong>Quick formula:</strong> Net = DailyWage + (DailyWage / PaidHours / 60) × OTMinutes × OTMultiplier
+                    </div>
+                </div>
+
+                <!-- Absent Example -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-red-600 mb-3">Absent Deduction Example</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div><strong>Daily wage:</strong> ₱250</div>
+                        <div><strong>Work schedule:</strong> 8:00 AM–8:00 PM (12 paid hours)</div>
+                        <div><strong>Absent:</strong> Full day (no work rendered)</div>
+                        <div><strong>Hourly rate:</strong> ₱250 ÷ 8 = ₱31.25/hr</div>
+                        <div><strong>Per-minute rate:</strong> ₱31.25 ÷ 60 = ₱0.520833/min</div>
+                        <div><strong>Absent minutes:</strong> 8 hrs × 60 = 480 minutes</div>
+                        <div><strong>Absent deduction:</strong> 480 × ₱0.520833 = ₱250.00</div>
+                        <div><strong>Net for the day:</strong> ₱250 − ₱250 = ₱0.00</div>
+                    </div>
+                    <div class="mt-3 p-2 bg-red-50 rounded text-sm">
+                        <strong>Quick formula:</strong> Net = DailyWage − (DailyWage / PaidHours / 60) × AbsentMinutes
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Calculator Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Manual Calculator</h2>
+            
+            <form id="manualCalculatorForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Daily Wage (₱)</label>
+                    <input type="number" id="dailyWage" value="250" step="0.01" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Work Hours per Day</label>
+                    <input type="number" id="workHours" value="8" step="0.5" min="1" max="24" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Lunch Hours per Day</label>
+                    <input type="number" id="lunchHours" value="1" step="0.5" min="0" max="8" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Late Minutes</label>
+                    <input type="number" id="lateMinutes" value="15" step="1" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Undertime Minutes</label>
+                    <input type="number" id="undertimeMinutes" value="30" step="1" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Absent Hours</label>
+                    <input type="number" id="absentHours" value="0" step="0.5" min="0" max="8" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Overtime Minutes</label>
+                    <input type="number" id="overtimeMinutes" value="0" step="1" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="md:col-span-2 lg:col-span-1">
+                    <button type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Calculate
+                    </button>
+                </div>
+            </form>
+
+            <div id="calculationResults" class="hidden">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+
+        <!-- System Settings Section -->
+        <div id="systemSettingsContainer" class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <!-- Settings form will be populated here -->
+        </div>
+
+        <!-- API Test Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">API Test</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Employee ID</label>
+                    <input type="number" id="testEmployeeId" value="1" min="1" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input type="date" id="testStartDate" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                    <input type="date" id="testEndDate" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="flex space-x-4 mb-6">
+                <button id="testCalculateBtn" 
+                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    Test Calculate Deductions
+                </button>
+                <button id="testPayrollBtn" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                    Test Payroll Deductions
+                </button>
+            </div>
+
+            <div id="apiTestResults" class="hidden">
+                <!-- API test results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the attendance deductions module
+        let attendanceDeductions;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize module
+            attendanceDeductions = new AttendanceDeductions();
+            
+            // Set default dates for testing
+            const today = new Date();
+            const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            
+            document.getElementById('testStartDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('testEndDate').value = endDate.toISOString().split('T')[0];
+            
+            // Create settings form
+            attendanceDeductions.createSettingsForm('systemSettingsContainer');
+            
+            // Bind manual calculator form
+            document.getElementById('manualCalculatorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateManually();
+            });
+            
+            // Bind API test buttons
+            document.getElementById('testCalculateBtn').addEventListener('click', function() {
+                testCalculateDeductions();
+            });
+            
+            document.getElementById('testPayrollBtn').addEventListener('click', function() {
+                testPayrollDeductions();
+            });
+        });
+
+        function calculateManually() {
+            const dailyWage = parseFloat(document.getElementById('dailyWage').value);
+            const workHours = parseFloat(document.getElementById('workHours').value);
+            const lunchHours = parseFloat(document.getElementById('lunchHours').value);
+            const lateMinutes = parseFloat(document.getElementById('lateMinutes').value);
+            const undertimeMinutes = parseFloat(document.getElementById('undertimeMinutes').value);
+            const absentHours = parseFloat(document.getElementById('absentHours').value);
+            const overtimeMinutes = parseFloat(document.getElementById('overtimeMinutes').value);
+            
+            if (!attendanceDeductions) {
+                alert('Attendance deductions module not initialized');
+                return;
+            }
+            
+            const results = attendanceDeductions.calculateDeductionsManually(
+                dailyWage, workHours, lunchHours, lateMinutes, undertimeMinutes, absentHours, overtimeMinutes
+            );
+            
+            displayManualResults(results);
+        }
+
+        function displayManualResults(results) {
+            const container = document.getElementById('calculationResults');
+            container.classList.remove('hidden');
+            
+            container.innerHTML = `
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Calculation Results</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-blue-700 mb-2">Rates</h4>
+                            <div class="space-y-1 text-sm">
+                                <div>Daily Wage: ${attendanceDeductions.formatCurrency(results.daily_wage)}</div>
+                                <div>Hourly Rate: ${attendanceDeductions.formatCurrency(results.hourly_rate)}/hr</div>
+                                <div>Per-Minute Rate: ${attendanceDeductions.formatCurrency(results.per_minute_rate)}/min</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-700 mb-2">Deductions & Earnings</h4>
+                            <div class="space-y-1 text-sm">
+                                <div>Late Deduction: -${attendanceDeductions.formatCurrency(results.late_deduction)}</div>
+                                <div>Undertime Deduction: -${attendanceDeductions.formatCurrency(results.undertime_deduction)}</div>
+                                <div>Absent Deduction: -${attendanceDeductions.formatCurrency(results.absent_deduction)}</div>
+                                <div>Overtime Pay: +${attendanceDeductions.formatCurrency(results.overtime_pay)}</div>
+                                <div class="font-semibold">Net Pay: ${attendanceDeductions.formatCurrency(results.net_pay)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-white rounded border">
+                        <h4 class="font-medium text-blue-700 mb-2">Formulas Used</h4>
+                        <div class="text-xs space-y-1">
+                            <div><strong>Late:</strong> ${results.formulas.late_formula}</div>
+                            <div><strong>Undertime:</strong> ${results.formulas.undertime_formula}</div>
+                            <div><strong>Overtime:</strong> ${results.formulas.overtime_formula}</div>
+                            <div><strong>Absent:</strong> ${results.formulas.absent_formula}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function testCalculateDeductions() {
+            const employeeId = document.getElementById('testEmployeeId').value;
+            const startDate = document.getElementById('testStartDate').value;
+            const endDate = document.getElementById('testEndDate').value;
+            
+            if (!employeeId || !startDate || !endDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const results = await attendanceDeductions.calculateDeductions(employeeId, startDate, endDate);
+            displayApiResults(results, 'Calculate Deductions');
+        }
+
+        async function testPayrollDeductions() {
+            const employeeId = document.getElementById('testEmployeeId').value;
+            const startDate = document.getElementById('testStartDate').value;
+            const endDate = document.getElementById('testEndDate').value;
+            
+            if (!employeeId || !startDate || !endDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const results = await attendanceDeductions.calculatePayrollDeductions(employeeId, startDate, endDate);
+            displayApiResults(results, 'Payroll Deductions');
+        }
+
+        function displayApiResults(results, operation) {
+            const container = document.getElementById('apiTestResults');
+            container.classList.remove('hidden');
+            
+            if (results.error) {
+                container.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-red-800 mb-2">${operation} - Error</h3>
+                        <p class="text-red-700">${results.error}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (results.summary) {
+                // Use the module's table creation function
+                attendanceDeductions.createDeductionsTable(results, 'apiTestResults');
+            } else {
+                container.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-green-800 mb-2">${operation} - Success</h3>
+                        <pre class="text-sm text-green-700 overflow-auto">${JSON.stringify(results, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

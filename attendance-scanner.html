@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance Scanner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* Prevent any scrolling behavior */
+    html, body {
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
+    
+    /* Ensure scanner container fills exactly the viewport */
+    #qr-reader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Prevent zoom and scroll on mobile */
+    * {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Fullscreen Scanner -->
+  <div id="qr-reader" class="w-full h-full bg-black relative overflow-hidden">
+    <!-- Floating Controls Overlay -->
+    <div class="absolute top-4 left-4 right-4 flex justify-end items-start z-10">
+          <!-- Status Display -->
+          <div class="bg-black bg-opacity-70 text-white rounded-lg p-3 backdrop-blur-sm max-w-md">
+            <p id="scanStatus" class="text-sm">Idle. Press Start to begin scanning.</p>
+          </div>
+        </div>
+        
+        <!-- Recent Scans Overlay -->
+        <div class="absolute bottom-4 right-4 w-80 max-h-48 bg-black bg-opacity-70 text-white rounded-lg p-3 backdrop-blur-sm">
+          <h3 class="text-sm font-semibold mb-2">Recent Scans</h3>
+          <div id="recentScans" class="overflow-auto space-y-1 text-xs max-h-32"></div>
+        </div>
+  </div>
+
+  <script src="js/qrcode/attendance-scanner.js"></script>
+</body>
+</html>
